@@ -22,14 +22,3 @@ ENV DBUS_SESSION_BUS_ADDRESS /dev/null
 COPY ci/scripts/setup_browser.sh /
 RUN /setup_browser.sh
 COPY ci/scripts/chrome_launcher.sh /opt/google/chrome/google-chrome
-
-# Setup workspace
-WORKDIR /repo
-COPY [".", "."]
-RUN chown kibana-ci -R /repo
-USER kibana-ci
-RUN /repo/ci/scripts/setup_repo.sh
-
-# go!
-COPY ci/scripts/run_tasks.sh /
-ENTRYPOINT ["/run_tasks.sh"]

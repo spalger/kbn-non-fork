@@ -5,8 +5,9 @@ machine:
 dependencies:
   override:
     - if [[ -e ~/docker/img.tar ]]; then docker load -i ~/docker/img.tar; fi
-    - docker build -t kibana/ci-task-runner:$CIRCLE_SHA1 --file ci/Dockerfile .
-    - mkdir -p ~/docker; docker save kibana/ci-task-runner:$CIRCLE_SHA1 > ~/docker/img.tar
+    - docker build -t kibana-ci/base --file ci/base/Dockerfile .
+    - docker build -t kibana-ci/task-runner --file ci/task-runner/Dockerfile .
+    - mkdir -p ~/docker; docker save kibana-ci/base kibana-ci/task-runner > ~/docker/img.tar
 
   cache_directories:
     - "~/docker"
