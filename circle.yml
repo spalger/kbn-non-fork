@@ -8,7 +8,7 @@ dependencies:
     - docker build -t kibana-ci/task-runner:$CIRCLE_SHA1 --file ci/Dockerfile .
     - docker save kibana-ci/task-runner:$CIRCLE_SHA1 > ~/docker-images.tar
   cache_directories:
-    - "~/docker"
+    - "~/docker-images.tar"
 
 test:
   override:
