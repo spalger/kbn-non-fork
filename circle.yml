@@ -12,7 +12,7 @@ dependencies:
 
 test:
   override:
-    - docker run -it kibana/task-runner:$CIRCLE_SHA1:
+    - docker run -it kibana-ci/task-runner:$CIRCLE_SHA1:
         parallel: true
         files:
           - ci/tasks/*
