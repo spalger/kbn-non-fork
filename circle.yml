@@ -1,0 +1,17 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - ci/circle_ci/build_image.sh
+
+  cache_directories:
+    - "~/docker-cache"
+
+test:
+  override:
+    - docker run -it kibana-ci/task-runner:$CIRCLE_SHA1:
+        parallel: true
+        files:
+          - ci/tasks/*
