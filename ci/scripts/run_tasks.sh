@@ -2,5 +2,5 @@
 
 for task in "$@"
 do
-    "/repo/ci/tasks/$task"
+    "/repo/$task"
 done
