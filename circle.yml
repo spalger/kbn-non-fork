@@ -1,21 +1,18 @@
 machine:
-  pre:
-    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
-
   services:
     - docker
 
 dependencies:
   override:
-    - if [[ -f ~/docker-images.tar ]]; then docker load -i ~/docker-images.tar; fi
-    - docker build -t kibana/ci-task-runner:$CIRCLE_SHA1 --file ci/Dockerfile .
-    - docker save kibana-ci/ci-task-runner:$CIRCLE_SHA1 > ~/docker-images.tar
+    - docker pull spalger/kibana-ci:latest || true
+    - docker build -t kibana-ci/task-runner:$CIRCLE_SHA1 --file ci/Dockerfile .
+    - docker save kibana-ci/task-runner:$CIRCLE_SHA1 > ~/docker-images.tar
   cache_directories:
     - "~/docker"
 
 test:
   override:
-    - docker run -it kibana/ci-task-runner:$CIRCLE_SHA1:
+    - docker run -it kibana/task-runner:$CIRCLE_SHA1:
         parallel: true
         files:
           - ci/tasks/*
