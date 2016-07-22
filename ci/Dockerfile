@@ -31,4 +31,5 @@ USER kibana-ci
 RUN /repo/ci/scripts/setup_repo.sh
 
 # go!
-ENTRYPOINT ["npm", "run"]
+COPY ci/scripts/run_tasks.sh /
+ENTRYPOINT ["/run_tasks.sh"]

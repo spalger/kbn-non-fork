@@ -5,12 +5,15 @@ machine:
 dependencies:
   override:
     - if [[ -e ~/docker/img.tar ]]; then docker load -i ~/docker/img.tar; fi
-    - docker build -t kibana-ci:$CIRCLE_SHA1 --file ci/Dockerfile .
-    - mkdir -p ~/docker; docker save kibana-ci:$CIRCLE_SHA1 > ~/docker/img.tar
+    - docker build -t kibana/ci-task-runner:$CIRCLE_SHA1 --file ci/Dockerfile .
+    - mkdir -p ~/docker; docker save kibana/ci-task-runner:$CIRCLE_SHA1 > ~/docker/img.tar
 
   cache_directories:
     - "~/docker"
 
 test:
   override:
-    - docker run -it kibana-ci:$CIRCLE_SHA1 ci:unit
+    - docker run -it kibana/ci-task-runner:$CIRCLE_SHA1:
+        parallel: true
+        files:
+          - ci/tasks/*
