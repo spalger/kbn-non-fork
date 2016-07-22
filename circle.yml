@@ -4,7 +4,7 @@ machine:
 
 dependencies:
   override:
-    - docker pull spalger/kibana-ci:latest || true
+    - if [[ -f ~/docker-images.tar ]]; then docker load --input ~/docker-images.tar; fi
     - docker build -t kibana-ci/task-runner:$CIRCLE_SHA1 --file ci/Dockerfile .
     - docker save kibana-ci/task-runner:$CIRCLE_SHA1 > ~/docker-images.tar
   cache_directories:
