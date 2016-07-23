@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
 # we date our cache so that it is always rebuilt from scratch once a week
 date="$(date +%Y_%W)"
