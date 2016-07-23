@@ -18,9 +18,6 @@ RUN \
 # give ownership of the workspace to kibanaci user
 RUN chown -R kibanaci /workspace
 
-# switch over to the kibanaci user
-USER kibanaci
-
 # copy just package.json so this step won't invalidate
 # unless package.json is changed
 COPY package.json .
@@ -33,13 +30,15 @@ COPY [".", "."]
 RUN chown kibanaci . # allow creating root level dirs
 RUN chown -R kibanaci optimize
 
+# switch over to the kibanaci user
+USER kibanaci
+
 # some grunt tasks require a git repo
 RUN \
   git init && \
   git config --global user.name "kibanaci" && \
   git config --global user.email kibanaci@ci-container && \
   git commit -q --allow-empty -m 'some grunt tasks need a repo'
-
 
 # ensure that all dependencies are up to date, respecting semver, but reuse existing files
 RUN npm --depth 9999 update
