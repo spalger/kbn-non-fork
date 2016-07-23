@@ -41,4 +41,4 @@ echo "  + building and tagging with '$runner_tag'"
 docker build -t "$runner_tag" --file ci/Dockerfile .
 
 echo "  + caching image at '$cache_dir/$runner_cache_name'"
-docker save "$runner_tag" > "$cache_dir/$runner_cache_name"
+docker save "$runner_tag" kibanaci/base:n447-j8-chrome > "$cache_dir/$runner_cache_name"
