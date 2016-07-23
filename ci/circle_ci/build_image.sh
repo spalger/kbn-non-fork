@@ -6,9 +6,11 @@ set -ex
 date="$(date +%Y_%W)"
 cache_dir=~/docker-cache
 
+branch_sum="$(echo "$CIRCLE_BRANCH" | shasum | cut -d ' ' -f 1)"
+
 base_cache_name="base_image.tar"
 base_cache_path="$cache_dir/$base_cache_name"
-base_tag="kibana-ci/base:$CIRCLE_BRANCH"
+base_tag="kibana-ci/base:branch:$branch_sum"
 
 runner_cache_prefix="runner_image_"
 runner_cache_name="${runner_cache_prefix}${date}.tar"
