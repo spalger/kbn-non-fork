@@ -17,7 +17,7 @@ RUN \
 
 # some grunt tasks require a git repo
 RUN \
-  set -e;
+  set -e; \
   git init && \
   git config --global user.name "kibanaci" && \
   git config --global user.email kibanaci@ci-container && \
@@ -25,6 +25,9 @@ RUN \
 
 # give ownership of the workspace to kibanaci user
 RUN chown -R kibanaci /workspace
+
+# switch over to the kibanaci user
+USER kibanaci
 
 # copy just package.json so this step won't invalidate
 # unless package.json is changed
@@ -35,12 +38,14 @@ RUN npm install
 COPY [".", "."]
 
 # give ownership of certain parts of the repo to kibanaci user
-RUN chown kibanaci . # allow creating root level dirs
-RUN chown -R kibanaci optimize
+USER root
+RUN \
+  set -e; \
+  chown kibanaci .; \
+  chown -R kibanaci optimize node_modules;
 
-# switch over to the kibanaci user
+
 USER kibanaci
-
 # ensure that all dependencies are up to date, respecting semver, but reuse existing files
 RUN npm --depth 9999 update
 ENTRYPOINT ["./node_modules/.bin/babel-node", "ci/task_runner.js"]
