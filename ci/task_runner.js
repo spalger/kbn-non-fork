@@ -75,10 +75,6 @@ function getTaskQueue(taskArgs) {
       return;
     }
 
-    if (taskArg !== task) {
-      info('running', task, 'instead of', taskArg);
-    }
-
     return task;
   });
 
@@ -102,6 +98,7 @@ async function processTaskQueue(queue) {
     const task = resolve(TASK_DIR, `${queue.shift()}.sh`);
     const cleanup = new Set;
 
+    log.info('starting', task);
     const proc = spawn(task, [], { stdio: 'inherit' });
 
     liveProcs.add(proc);
