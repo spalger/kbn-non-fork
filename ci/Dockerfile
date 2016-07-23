@@ -29,6 +29,13 @@ RUN npm install
 # copy the build context into the image
 COPY [".", "."]
 
+# some grunt tasks require a git repo
+RUN \
+  git init && \
+  git config --global user.name "kibanaci" && \
+  git config --global user.email kibanaci@ci-container && \
+  git commit -q --allow-empty -m 'some grunt tasks need a repo'
+
 # ensure that all dependencies are up to date, respecting semver, but reuse existing files
 RUN npm --depth 9999 update
 ENTRYPOINT ["./node_modules/.bin/babel-node", "ci/task_runner.js"]
