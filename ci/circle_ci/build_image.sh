@@ -5,22 +5,36 @@ set -e
 # we date our cache so that it is always rebuilt from scratch once a week
 date="$(date +%Y_%W)"
 cache_dir=~/docker-cache
-cache_name="images_$date.tar"
-images_tar="$cache_dir/$cache_name"
 
-if [[ -d "$cache_dir" ]]; then
-  # clear out unneeded caches
-  for cache in "$(find $cache_dir -maxdepth 1 -name '*.tar' -not -name $cache_name)"; do
-    rm -rfv "$cache"
-  done
-fi
+base_cache_name="base_image.tar"
+base_cache_path="$cache_dir/$base_cache_name"
+base_tag="kibana-ci/base:$CIRCLE_BRANCH"
 
-if [[ -f "$images_tar" ]]; then
-  docker load < "$images_tar";
-fi
+runner_cache_prefix="runner_image_"
+runner_cache_name="${runner_cache_prefix}${date}.tar"
+runner_cache_path="$cache_dir/$runner_cache_name"
+runner_tag="kibana-ci/task-runner:$CIRCLE_SHA1"
 
-build_tag="kibana-ci/task-runner:$CIRCLE_SHA1"
-docker build -t "$build_tag" --file ci/Dockerfile .
+# ensure the cache directory exists
+mkdir -p $cache_dir
 
-# also save the upstream box, or the cache doesn't work
-docker save "$build_tag" buildpack-deps:xenial > "$images_tar"
+# load of remove cache items
+caches="$(find $cache_dir -maxdepth 1 -name '*.tar')"
+for c in $caches; do
+  if [ "$c" == "$base_cache_path" ] || [ "$c" == "$runner_cache_path" ] ; then
+    docker load < "$c";
+  else
+    echo "removing outdated cache item $c";
+    rm -rfv "$c";
+  fi
+done
+
+# build the base image
+docker build -t "$base_tag" --file ci/base/Dockerfile .
+# save the base image and it's upstream to cache
+docker save "$base_tag" buildpack-deps:xenial > "$base_cache_path"
+
+# build the runner image
+docker build -t "$runner_tag" --file ci/task_runner/Dockerfile .
+# save the runner image to cache
+docker save "$runner_tag" > "$runner_cache_path"

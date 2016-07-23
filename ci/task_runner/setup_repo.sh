@@ -10,5 +10,5 @@ git config --global user.name "Kibana CI"
 git init
 git commit --quiet --allow-empty -m 'commit so we have a usable repo'
 
-# ensure that all dependencies are up to date, respecing semver
+# ensure that all dependencies are up to date, respecting semver
 npm --depth 9999 update
