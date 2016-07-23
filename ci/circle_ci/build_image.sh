@@ -9,7 +9,7 @@ cache_dir=~/docker-cache
 date="$(date +%Y_%W)"
 runner_cache_prefix="task_runner_"
 runner_cache_name="${runner_cache_prefix}${date}.tar"
-runner_tag="kibanaci/runner:$CIRCLE_SHA1"
+runner_tag="kibanaci/runner:latest"
 
 # ensure the cache directory exists
 mkdir -p $cache_dir
