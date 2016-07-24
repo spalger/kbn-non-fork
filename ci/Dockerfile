@@ -1,8 +1,8 @@
-FROM kibanaci/base:n447-j8-chrome
+FROM kibanaci/base-n447-j8-chrome
 
 # Setup workspace
-RUN mkdir -p /workspace/repo
-WORKDIR /workspace/repo
+RUN mkdir -p /repo
+WORKDIR /repo
 
 # validate the node version
 COPY .node-version .
@@ -24,7 +24,7 @@ RUN \
   git commit -q --allow-empty -m 'some grunt tasks need a repo'
 
 # give ownership of the workspace to kibanaci user
-RUN chown -R kibanaci /workspace
+RUN chown -R kibanaci /repo
 
 # switch over to the kibanaci user
 USER kibanaci
@@ -38,14 +38,11 @@ RUN npm install
 COPY [".", "."]
 
 # give ownership of certain parts of the repo to kibanaci user
-USER root
 RUN \
   set -e; \
-  chown kibanaci .; \
-  chown -R kibanaci optimize node_modules;
+  sudo chown kibanaci .; \
+  sudo chown -R kibanaci optimize node_modules;
 
-
-USER kibanaci
 # ensure that all dependencies are up to date, respecting semver, but reuse existing files
 RUN npm --depth 9999 update
 ENTRYPOINT ["./node_modules/.bin/babel-node", "ci/task_runner.js"]
